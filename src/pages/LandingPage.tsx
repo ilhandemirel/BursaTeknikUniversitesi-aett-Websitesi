@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import Hero from '../components/Hero';
+import Introduction from '../components/Introduction';
 import About from '../components/About';
 import Team from '../components/Team';
 import VehicleShowcase from '../components/VehicleShowcase';
@@ -84,6 +85,7 @@ function LandingPage() {
 
             <main className="relative">
                 <Hero />
+                <Introduction /> {/* New Section */}
                 {visibleSections.show_about && <About />}
                 {visibleSections.show_team && <Team />}
                 {visibleSections.show_vehicles && <VehicleShowcase />}

@@ -25,6 +25,14 @@ const SettingsManager = () => {
         media: ''
     });
 
+    const [introSettings, setIntroSettings] = useState({
+        headlineStart: '',
+        headlineHighlight: '',
+        description1: '',
+        description2: '',
+        imageUrl: ''
+    });
+
     const [heroSettings, setHeroSettings] = useState({
         subtitle: '',
         titleStart: '',
@@ -92,9 +100,12 @@ const SettingsManager = () => {
                     'desc_races',
                     'desc_activities',
                     'desc_sponsors',
-                    'desc_activities',
-                    'desc_sponsors',
                     'desc_media',
+                    'intro_headline_start',
+                    'intro_headline_highlight',
+                    'intro_description_1',
+                    'intro_description_2',
+                    'intro_image_url',
                     'hero_subtitle',
                     'hero_title_start',
                     'hero_title_highlight',
@@ -102,6 +113,19 @@ const SettingsManager = () => {
                     'show_about',
                     'show_team',
                     'show_vehicles',
+                    'show_races',
+                    'show_activities',
+                    'show_sponsors',
+                    'show_media',
+                    'social_instagram',
+                    'social_twitter',
+                    'social_linkedin',
+                    'contact_address',
+                    'contact_phone',
+                    'contact_email',
+                    'emailjs_service_id',
+                    'emailjs_template_id',
+                    'emailjs_public_key'
                 ]);
 
             if (error) throw error;
@@ -146,6 +170,11 @@ const SettingsManager = () => {
                     if (setting.key === 'emailjs_service_id') setEmailJsSettings(prev => ({ ...prev, serviceId: setting.value }));
                     if (setting.key === 'emailjs_template_id') setEmailJsSettings(prev => ({ ...prev, templateId: setting.value }));
                     if (setting.key === 'emailjs_public_key') setEmailJsSettings(prev => ({ ...prev, publicKey: setting.value }));
+                    if (setting.key === 'intro_headline_start') setIntroSettings(prev => ({ ...prev, headlineStart: setting.value }));
+                    if (setting.key === 'intro_headline_highlight') setIntroSettings(prev => ({ ...prev, headlineHighlight: setting.value }));
+                    if (setting.key === 'intro_description_1') setIntroSettings(prev => ({ ...prev, description1: setting.value }));
+                    if (setting.key === 'intro_description_2') setIntroSettings(prev => ({ ...prev, description2: setting.value }));
+                    if (setting.key === 'intro_image_url') setIntroSettings(prev => ({ ...prev, imageUrl: setting.value }));
                 });
 
                 setSectionDescriptions(newDescriptions);
@@ -220,7 +249,6 @@ const SettingsManager = () => {
         }
     };
 
-
     const handleSaveAbout = async () => {
         setSaving(true);
         setError(null);
@@ -274,8 +302,6 @@ const SettingsManager = () => {
             setSavingDesc(false);
         }
     };
-
-
 
     const handleSaveVisibility = async () => {
         setSavingVis(true);
@@ -331,6 +357,64 @@ const SettingsManager = () => {
             setError('Kaydedilirken hata oluştu: ' + err.message);
         } finally {
             setSavingDesc(false);
+        }
+    };
+
+    const handleSaveIntro = async () => {
+        setSaving(true);
+        setError(null);
+        setSuccess(null);
+
+        try {
+            const updates = [
+                { key: 'intro_headline_start', value: introSettings.headlineStart, type: 'text' },
+                { key: 'intro_headline_highlight', value: introSettings.headlineHighlight, type: 'text' },
+                { key: 'intro_description_1', value: introSettings.description1, type: 'text' },
+                { key: 'intro_description_2', value: introSettings.description2, type: 'text' },
+                { key: 'intro_image_url', value: introSettings.imageUrl, type: 'image' }
+            ];
+
+            const { error } = await supabase
+                .from('site_settings')
+                .upsert(updates, { onConflict: 'key' });
+
+            if (error) throw error;
+
+            setSuccess('Hakkımızda (Üst Bölüm) güncellendi.');
+        } catch (err: any) {
+            setError('Kaydedilirken hata oluştu: ' + err.message);
+        } finally {
+            setSaving(false);
+        }
+    };
+
+    const handleIntroImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (!e.target.files || e.target.files.length === 0) return;
+
+        const file = e.target.files[0];
+        const fileExt = file.name.split('.').pop();
+        const fileName = `intro-${Math.random()}.${fileExt}`;
+        const filePath = `${fileName}`;
+
+        setUploading(true);
+        setError(null);
+
+        try {
+            const { error: uploadError } = await supabase.storage
+                .from('images')
+                .upload(filePath, file);
+
+            if (uploadError) throw uploadError;
+
+            const { data: { publicUrl } } = supabase.storage
+                .from('images')
+                .getPublicUrl(filePath);
+
+            setIntroSettings(prev => ({ ...prev, imageUrl: publicUrl }));
+        } catch (err: any) {
+            setError('Görsel yüklenirken hata oluştu: ' + err.message);
+        } finally {
+            setUploading(false);
         }
     };
 
@@ -502,6 +586,7 @@ const SettingsManager = () => {
                             <div className="w-11 h-6 bg-gray-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-lime-500"></div>
                         </label>
                     </div>
+                    {/* Add other visibility toggles here if needed, keeping simple for now */}
                     <div className="flex items-center justify-between bg-black/50 p-4 rounded-lg border border-gray-700">
                         <span className="text-white font-medium">Takım</span>
                         <label className="relative inline-flex items-center cursor-pointer">
@@ -648,6 +733,91 @@ const SettingsManager = () => {
                 </div>
             </div>
 
+            {/* Intro Section Settings (NEW) */}
+            <div className="bg-gray-900 rounded-xl p-6 border border-gray-800">
+                <div className="flex items-center gap-3 mb-6">
+                    <Info className="text-lime-500" size={24} />
+                    <h2 className="text-xl font-bold text-white">Hakkımızda (Üst Bölüm)</h2>
+                </div>
+                <div className="space-y-6">
+                    <div className="grid md:grid-cols-2 gap-6">
+                        <div>
+                            <label className="block text-sm font-medium text-gray-400 mb-2">Başlık (Normal Kısım)</label>
+                            <textarea
+                                rows={3}
+                                value={introSettings.headlineStart}
+                                onChange={(e) => setIntroSettings({ ...introSettings, headlineStart: e.target.value })}
+                                className="w-full bg-black border border-gray-700 rounded-lg px-4 py-2 text-white focus:border-lime-500 focus:outline-none"
+                                placeholder="Örn: BTÜ'nün elektromobil ..."
+                            />
+                        </div>
+                        <div>
+                            <label className="block text-sm font-medium text-gray-400 mb-2">Başlık (Yeşil Vurgulu Kısım)</label>
+                            <input
+                                type="text"
+                                value={introSettings.headlineHighlight}
+                                onChange={(e) => setIntroSettings({ ...introSettings, headlineHighlight: e.target.value })}
+                                className="w-full bg-black border border-gray-700 rounded-lg px-4 py-2 text-white focus:border-lime-500 focus:outline-none"
+                                placeholder="Örn: Haciwatt takımıyız."
+                            />
+                        </div>
+                    </div>
+
+                    <div>
+                        <label className="block text-sm font-medium text-gray-400 mb-2">Açıklama 1 (Sağ Üst Metin)</label>
+                        <textarea
+                            rows={4}
+                            value={introSettings.description1}
+                            onChange={(e) => setIntroSettings({ ...introSettings, description1: e.target.value })}
+                            className="w-full bg-black border border-gray-700 rounded-lg px-4 py-2 text-white focus:border-lime-500 focus:outline-none"
+                        />
+                    </div>
+
+                    <div>
+                        <label className="block text-sm font-medium text-gray-400 mb-2">Açıklama 2 (Sağ Alt Metin)</label>
+                        <textarea
+                            rows={4}
+                            value={introSettings.description2}
+                            onChange={(e) => setIntroSettings({ ...introSettings, description2: e.target.value })}
+                            className="w-full bg-black border border-gray-700 rounded-lg px-4 py-2 text-white focus:border-lime-500 focus:outline-none"
+                        />
+                    </div>
+
+                    <div>
+                        <label className="block text-sm font-medium text-gray-400 mb-2">Sol Görsel</label>
+                        <div className="flex items-center gap-4">
+                            {introSettings.imageUrl && (
+                                <div className="w-32 h-20 bg-gray-800 rounded-lg overflow-hidden flex-shrink-0">
+                                    <img src={introSettings.imageUrl} alt="Intro" className="w-full h-full object-cover" />
+                                </div>
+                            )}
+                            <label className="cursor-pointer bg-gray-800 text-white px-4 py-2 rounded-lg font-bold hover:bg-gray-700 transition-colors flex items-center gap-2 border border-gray-700">
+                                {uploading ? <Loader2 className="animate-spin" size={20} /> : <Upload size={20} />}
+                                <span>{uploading ? 'Yükleniyor...' : 'Görsel Yükle'}</span>
+                                <input
+                                    type="file"
+                                    className="hidden"
+                                    accept="image/*"
+                                    onChange={handleIntroImageUpload}
+                                    disabled={uploading}
+                                />
+                            </label>
+                        </div>
+                    </div>
+
+                    <div className="flex justify-end pt-4">
+                        <button
+                            onClick={handleSaveIntro}
+                            disabled={saving}
+                            className="bg-lime-500 text-black px-6 py-2 rounded-lg font-bold hover:bg-lime-400 transition-colors flex items-center gap-2"
+                        >
+                            {saving ? <Loader2 className="animate-spin" size={20} /> : <Save size={20} />}
+                            Kaydet
+                        </button>
+                    </div>
+                </div>
+            </div>
+
             {/* Section Descriptions */}
             <div className="bg-gray-900 rounded-xl p-6 border border-gray-800">
                 <div className="flex justify-between items-center mb-6">
@@ -782,7 +952,7 @@ const SettingsManager = () => {
                 <div className="flex justify-between items-center mb-6">
                     <h2 className="text-xl font-semibold text-white flex items-center gap-2">
                         <Info className="text-lime-400" />
-                        Hakkımızda Bölümü
+                        Hakkımızda Bölümü (Biz Kimiz?)
                     </h2>
                     <button
                         onClick={handleSaveAbout}

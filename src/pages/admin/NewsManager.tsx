@@ -13,6 +13,7 @@ interface NewsItem {
 const NewsManager = () => {
     const [news, setNews] = useState<NewsItem[]>([]);
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [editingId, setEditingId] = useState<string | null>(null);
     const [formData, setFormData] = useState({ title: '', content: '', image_url: '' });
 
     useEffect(() => {
@@ -32,15 +33,40 @@ const NewsManager = () => {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        const { error } = await supabase
-            .from('news')
-            .insert([formData]);
 
-        if (!error) {
-            setIsModalOpen(false);
-            setFormData({ title: '', content: '', image_url: '' });
-            fetchNews();
+        if (editingId) {
+            const { error } = await supabase
+                .from('news')
+                .update(formData)
+                .eq('id', editingId);
+
+            if (!error) {
+                setIsModalOpen(false);
+                setFormData({ title: '', content: '', image_url: '' });
+                setEditingId(null);
+                fetchNews();
+            }
+        } else {
+            const { error } = await supabase
+                .from('news')
+                .insert([formData]);
+
+            if (!error) {
+                setIsModalOpen(false);
+                setFormData({ title: '', content: '', image_url: '' });
+                fetchNews();
+            }
         }
+    };
+
+    const handleEdit = (item: NewsItem) => {
+        setEditingId(item.id);
+        setFormData({
+            title: item.title,
+            content: item.content,
+            image_url: item.image_url || ''
+        });
+        setIsModalOpen(true);
     };
 
     const handleDelete = async (id: string) => {
@@ -79,13 +105,16 @@ const NewsManager = () => {
                                 <div className="w-full h-full flex items-center justify-center text-gray-600 text-xs">Görsel Yok</div>
                             )}
                         </div>
-                        <div className="flex-1">
-                            <h3 className="text-white font-bold text-lg">{item.title}</h3>
-                            <p className="text-gray-400 text-sm line-clamp-1">{item.content}</p>
+                        <div className="flex-1 min-w-0">
+                            <h3 className="text-white font-bold text-lg truncate">{item.title}</h3>
+                            <p className="text-gray-400 text-sm line-clamp-1 break-all">{item.content}</p>
                             <p className="text-gray-500 text-xs mt-1">{new Date(item.published_at).toLocaleDateString('tr-TR')}</p>
                         </div>
                         <div className="flex space-x-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                            <button className="p-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors">
+                            <button
+                                onClick={() => handleEdit(item)}
+                                className="p-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
+                            >
                                 <Edit2 size={18} />
                             </button>
                             <button
@@ -102,7 +131,7 @@ const NewsManager = () => {
             {isModalOpen && (
                 <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50">
                     <div className="bg-gray-900 p-8 rounded-2xl w-full max-w-2xl border border-gray-800">
-                        <h2 className="text-2xl font-bold text-white mb-6">Yeni Haber Ekle</h2>
+                        <h2 className="text-2xl font-bold text-white mb-6">{editingId ? 'Haberi Düzenle' : 'Yeni Haber Ekle'}</h2>
                         <form onSubmit={handleSubmit} className="space-y-4">
                             <div>
                                 <label className="block text-sm font-medium text-gray-400 mb-2">Başlık</label>
@@ -136,7 +165,11 @@ const NewsManager = () => {
                             <div className="flex space-x-4 pt-4">
                                 <button
                                     type="button"
-                                    onClick={() => setIsModalOpen(false)}
+                                    onClick={() => {
+                                        setIsModalOpen(false);
+                                        setFormData({ title: '', content: '', image_url: '' });
+                                        setEditingId(null);
+                                    }}
                                     className="flex-1 bg-gray-800 text-white font-bold py-3 rounded-lg hover:bg-gray-700 transition-colors"
                                 >
                                     İptal

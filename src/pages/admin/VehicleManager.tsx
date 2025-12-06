@@ -13,6 +13,7 @@ const VehicleManager = () => {
     const [vehicles, setVehicles] = useState<Vehicle[]>([]);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [uploading, setUploading] = useState(false);
+    const [editingId, setEditingId] = useState<string | null>(null);
     const [formData, setFormData] = useState({
         name: '',
         image_url: '',
@@ -85,18 +86,46 @@ const VehicleManager = () => {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        const { error } = await supabase
-            .from('vehicles')
-            .insert([formData]);
 
-        if (!error) {
-            setIsModalOpen(false);
-            setFormData({ name: '', image_url: '', specs: [{ label: '', value: '' }] });
-            fetchVehicles();
+        if (editingId) {
+            const { error } = await supabase
+                .from('vehicles')
+                .update(formData)
+                .eq('id', editingId);
+
+            if (!error) {
+                setIsModalOpen(false);
+                setFormData({ name: '', image_url: '', specs: [{ label: '', value: '' }] });
+                setEditingId(null);
+                fetchVehicles();
+            } else {
+                console.error('Error updating vehicle:', error);
+                alert('Araç güncellenirken bir hata oluştu.');
+            }
         } else {
-            console.error('Error adding vehicle:', error);
-            alert('Araç eklenirken bir hata oluştu.');
+            const { error } = await supabase
+                .from('vehicles')
+                .insert([formData]);
+
+            if (!error) {
+                setIsModalOpen(false);
+                setFormData({ name: '', image_url: '', specs: [{ label: '', value: '' }] });
+                fetchVehicles();
+            } else {
+                console.error('Error adding vehicle:', error);
+                alert('Araç eklenirken bir hata oluştu.');
+            }
         }
+    };
+
+    const handleEdit = (vehicle: Vehicle) => {
+        setEditingId(vehicle.id);
+        setFormData({
+            name: vehicle.name,
+            image_url: vehicle.image_url || '',
+            specs: vehicle.specs && vehicle.specs.length > 0 ? vehicle.specs : [{ label: '', value: '' }]
+        });
+        setIsModalOpen(true);
     };
 
     const handleDelete = async (id: string, imageUrl: string) => {
@@ -138,7 +167,10 @@ const VehicleManager = () => {
                                 <div className="w-full h-full flex items-center justify-center text-gray-600">Görsel Yok</div>
                             )}
                             <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center space-x-4">
-                                <button className="p-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors">
+                                <button
+                                    onClick={() => handleEdit(vehicle)}
+                                    className="p-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
+                                >
                                     <Edit2 size={20} />
                                 </button>
                                 <button
@@ -167,7 +199,7 @@ const VehicleManager = () => {
             {isModalOpen && (
                 <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 overflow-y-auto py-10">
                     <div className="bg-gray-900 p-8 rounded-2xl w-full max-w-2xl border border-gray-800 my-auto">
-                        <h2 className="text-2xl font-bold text-white mb-6">Yeni Araç Ekle</h2>
+                        <h2 className="text-2xl font-bold text-white mb-6">{editingId ? 'Aracı Düzenle' : 'Yeni Araç Ekle'}</h2>
                         <form onSubmit={handleSubmit} className="space-y-4">
                             <div>
                                 <label className="block text-sm font-medium text-gray-400 mb-2">Araç Adı</label>
@@ -261,7 +293,11 @@ const VehicleManager = () => {
                             <div className="flex space-x-4 pt-4">
                                 <button
                                     type="button"
-                                    onClick={() => setIsModalOpen(false)}
+                                    onClick={() => {
+                                        setIsModalOpen(false);
+                                        setFormData({ name: '', image_url: '', specs: [{ label: '', value: '' }] });
+                                        setEditingId(null);
+                                    }}
                                     className="flex-1 bg-gray-800 text-white font-bold py-3 rounded-lg hover:bg-gray-700 transition-colors"
                                 >
                                     İptal

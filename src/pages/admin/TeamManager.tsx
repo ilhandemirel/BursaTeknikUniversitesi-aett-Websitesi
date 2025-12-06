@@ -14,6 +14,7 @@ const TeamManager = () => {
     const [loading, setLoading] = useState(true);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [uploading, setUploading] = useState(false);
+    const [editingId, setEditingId] = useState<string | null>(null);
     const [formData, setFormData] = useState({ name: '', role: '', image_url: '' });
 
     useEffect(() => {
@@ -70,15 +71,40 @@ const TeamManager = () => {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        const { error } = await supabase
-            .from('team_members')
-            .insert([formData]);
 
-        if (!error) {
-            setIsModalOpen(false);
-            setFormData({ name: '', role: '', image_url: '' });
-            fetchMembers();
+        if (editingId) {
+            const { error } = await supabase
+                .from('team_members')
+                .update(formData)
+                .eq('id', editingId);
+
+            if (!error) {
+                setIsModalOpen(false);
+                setFormData({ name: '', role: '', image_url: '' });
+                setEditingId(null);
+                fetchMembers();
+            }
+        } else {
+            const { error } = await supabase
+                .from('team_members')
+                .insert([formData]);
+
+            if (!error) {
+                setIsModalOpen(false);
+                setFormData({ name: '', role: '', image_url: '' });
+                fetchMembers();
+            }
         }
+    };
+
+    const handleEdit = (member: TeamMember) => {
+        setEditingId(member.id);
+        setFormData({
+            name: member.name,
+            role: member.role,
+            image_url: member.image_url || ''
+        });
+        setIsModalOpen(true);
     };
 
     const handleDelete = async (id: string) => {
@@ -117,7 +143,10 @@ const TeamManager = () => {
                                 <div className="w-full h-full flex items-center justify-center text-gray-600">Fotoğraf Yok</div>
                             )}
                             <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center space-x-4">
-                                <button className="p-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors">
+                                <button
+                                    onClick={() => handleEdit(member)}
+                                    className="p-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
+                                >
                                     <Edit2 size={20} />
                                 </button>
                                 <button
@@ -139,7 +168,7 @@ const TeamManager = () => {
             {isModalOpen && (
                 <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50">
                     <div className="bg-gray-900 p-8 rounded-2xl w-full max-w-md border border-gray-800">
-                        <h2 className="text-2xl font-bold text-white mb-6">Yeni Üye Ekle</h2>
+                        <h2 className="text-2xl font-bold text-white mb-6">{editingId ? 'Üyeyi Düzenle' : 'Yeni Üye Ekle'}</h2>
                         <form onSubmit={handleSubmit} className="space-y-4">
                             <div>
                                 <label className="block text-sm font-medium text-gray-400 mb-2">Ad Soyad</label>
@@ -210,7 +239,11 @@ const TeamManager = () => {
                             <div className="flex space-x-4 pt-4">
                                 <button
                                     type="button"
-                                    onClick={() => setIsModalOpen(false)}
+                                    onClick={() => {
+                                        setIsModalOpen(false);
+                                        setFormData({ name: '', role: '', image_url: '' });
+                                        setEditingId(null);
+                                    }}
                                     className="flex-1 bg-gray-800 text-white font-bold py-3 rounded-lg hover:bg-gray-700 transition-colors"
                                 >
                                     İptal
