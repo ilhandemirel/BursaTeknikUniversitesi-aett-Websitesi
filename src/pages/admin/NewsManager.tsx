@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Plus, Trash2, Edit2 } from 'lucide-react';
+import { Plus, Trash2, Edit2, Upload, Loader2, X } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 
 interface NewsItem {
@@ -13,6 +13,7 @@ interface NewsItem {
 const NewsManager = () => {
     const [news, setNews] = useState<NewsItem[]>([]);
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [uploading, setUploading] = useState(false);
     const [editingId, setEditingId] = useState<string | null>(null);
     const [formData, setFormData] = useState({ title: '', content: '', image_url: '' });
 
@@ -29,6 +30,40 @@ const NewsManager = () => {
         if (!error && data) {
             setNews(data);
         }
+    };
+
+    const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (!e.target.files || e.target.files.length === 0) return;
+
+        const file = e.target.files[0];
+        const fileExt = file.name.split('.').pop();
+        const fileName = `news-${Math.random()}.${fileExt}`;
+        const filePath = `${fileName}`;
+
+        setUploading(true);
+
+        try {
+            const { error: uploadError } = await supabase.storage
+                .from('images')
+                .upload(filePath, file);
+
+            if (uploadError) throw uploadError;
+
+            const { data: { publicUrl } } = supabase.storage
+                .from('images')
+                .getPublicUrl(filePath);
+
+            setFormData({ ...formData, image_url: publicUrl });
+        } catch (error) {
+            console.error('Error uploading image:', error);
+            alert('Görsel yüklenirken bir hata oluştu.');
+        } finally {
+            setUploading(false);
+        }
+    };
+
+    const removeImage = () => {
+        setFormData({ ...formData, image_url: '' });
     };
 
     const handleSubmit = async (e: React.FormEvent) => {
@@ -130,7 +165,7 @@ const NewsManager = () => {
 
             {isModalOpen && (
                 <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50">
-                    <div className="bg-gray-900 p-8 rounded-2xl w-full max-w-2xl border border-gray-800">
+                    <div className="bg-gray-900 p-8 rounded-2xl w-full max-w-2xl border border-gray-800 max-h-[90vh] overflow-y-auto">
                         <h2 className="text-2xl font-bold text-white mb-6">{editingId ? 'Haberi Düzenle' : 'Yeni Haber Ekle'}</h2>
                         <form onSubmit={handleSubmit} className="space-y-4">
                             <div>
@@ -154,13 +189,46 @@ const NewsManager = () => {
                                 ></textarea>
                             </div>
                             <div>
-                                <label className="block text-sm font-medium text-gray-400 mb-2">Görsel URL</label>
-                                <input
-                                    type="url"
-                                    value={formData.image_url}
-                                    onChange={(e) => setFormData({ ...formData, image_url: e.target.value })}
-                                    className="w-full bg-black/50 border border-gray-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-lime-400"
-                                />
+                                <label className="block text-sm font-medium text-gray-400 mb-2">Haber Görseli</label>
+                                {formData.image_url ? (
+                                    <div className="relative aspect-video rounded-lg overflow-hidden border border-gray-700 group">
+                                        <img
+                                            src={formData.image_url}
+                                            alt="Preview"
+                                            className="w-full h-full object-cover"
+                                        />
+                                        <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                                            <button
+                                                type="button"
+                                                onClick={removeImage}
+                                                className="bg-red-500 text-white px-4 py-2 rounded-lg font-bold flex items-center gap-2 hover:bg-red-600 transition-colors"
+                                            >
+                                                <X size={20} />
+                                                Görseli Kaldır
+                                            </button>
+                                        </div>
+                                    </div>
+                                ) : (
+                                    <label className="flex flex-col items-center justify-center w-full h-32 border-2 border-gray-700 border-dashed rounded-lg cursor-pointer hover:bg-gray-800/50 hover:border-lime-400 transition-colors group">
+                                        <div className="flex flex-col items-center justify-center pt-5 pb-6">
+                                            {uploading ? (
+                                                <Loader2 className="animate-spin text-lime-400 mb-2" size={32} />
+                                            ) : (
+                                                <Upload className="text-gray-400 group-hover:text-lime-400 mb-2 transition-colors" size={32} />
+                                            )}
+                                            <p className="text-sm text-gray-400 group-hover:text-gray-300">
+                                                {uploading ? 'Yükleniyor...' : 'Görsel Yüklemek İçin Tıklayın'}
+                                            </p>
+                                        </div>
+                                        <input
+                                            type="file"
+                                            className="hidden"
+                                            accept="image/*"
+                                            onChange={handleImageUpload}
+                                            disabled={uploading}
+                                        />
+                                    </label>
+                                )}
                             </div>
                             <div className="flex space-x-4 pt-4">
                                 <button

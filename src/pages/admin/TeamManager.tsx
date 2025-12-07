@@ -167,7 +167,7 @@ const TeamManager = () => {
 
             {isModalOpen && (
                 <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50">
-                    <div className="bg-gray-900 p-8 rounded-2xl w-full max-w-md border border-gray-800">
+                    <div className="bg-gray-900 p-8 rounded-2xl w-full max-w-md border border-gray-800 max-h-[90vh] overflow-y-auto">
                         <h2 className="text-2xl font-bold text-white mb-6">{editingId ? 'Üyeyi Düzenle' : 'Yeni Üye Ekle'}</h2>
                         <form onSubmit={handleSubmit} className="space-y-4">
                             <div>

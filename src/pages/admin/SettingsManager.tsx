@@ -9,6 +9,7 @@ interface AboutCard {
 
 const SettingsManager = () => {
     const [logoUrl, setLogoUrl] = useState<string | null>(null);
+    const [faviconUrl, setFaviconUrl] = useState<string | null>(null);
     const [aboutDescription, setAboutDescription] = useState('');
     const [aboutCards, setAboutCards] = useState<AboutCard[]>([
         { title: 'Yenilikçi', description: 'En son teknolojileri kullanarak sürdürülebilir çözümler üretiyoruz' },
@@ -93,6 +94,7 @@ const SettingsManager = () => {
                 .select('*')
                 .in('key', [
                     'logo_url',
+                    'favicon_url',
                     'about_description',
                     'about_cards',
                     'desc_team',
@@ -135,6 +137,7 @@ const SettingsManager = () => {
 
                 data.forEach(setting => {
                     if (setting.key === 'logo_url') setLogoUrl(setting.value);
+                    if (setting.key === 'favicon_url') setFaviconUrl(setting.value);
                     if (setting.key === 'about_description') setAboutDescription(setting.value || '');
                     if (setting.key === 'about_cards' && setting.value) {
                         try {
@@ -242,6 +245,69 @@ const SettingsManager = () => {
 
             setLogoUrl(null);
             setSuccess('Logo başarıyla silindi.');
+        } catch (err: any) {
+            setError('Silme işlemi başarısız: ' + err.message);
+        } finally {
+            setUploading(false);
+        }
+    };
+
+    const handleFaviconUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (!e.target.files || e.target.files.length === 0) return;
+
+        const file = e.target.files[0];
+        const fileExt = file.name.split('.').pop();
+        const fileName = `favicon-${Math.random()}.${fileExt}`;
+        const filePath = `${fileName}`;
+
+        setUploading(true);
+        setError(null);
+        setSuccess(null);
+
+        try {
+            const { error: uploadError } = await supabase.storage
+                .from('images')
+                .upload(filePath, file);
+
+            if (uploadError) throw uploadError;
+
+            const { data: { publicUrl } } = supabase.storage
+                .from('images')
+                .getPublicUrl(filePath);
+
+            const { error: dbError } = await supabase
+                .from('site_settings')
+                .upsert({
+                    key: 'favicon_url',
+                    value: publicUrl,
+                    type: 'image'
+                }, { onConflict: 'key' });
+
+            if (dbError) throw dbError;
+
+            setFaviconUrl(publicUrl);
+            setSuccess('Favicon başarıyla güncellendi! (Değişikliklerin görünmesi için sayfayı yenileyin)');
+        } catch (err: any) {
+            setError('Favicon yüklenirken bir hata oluştu: ' + err.message);
+        } finally {
+            setUploading(false);
+        }
+    };
+
+    const handleDeleteFavicon = async () => {
+        if (!confirm('Faviconu silmek istediğinize emin misiniz?')) return;
+
+        setUploading(true);
+        try {
+            const { error } = await supabase
+                .from('site_settings')
+                .delete()
+                .eq('key', 'favicon_url');
+
+            if (error) throw error;
+
+            setFaviconUrl(null);
+            setSuccess('Favicon başarıyla silindi.');
         } catch (err: any) {
             setError('Silme işlemi başarısız: ' + err.message);
         } finally {
@@ -542,6 +608,98 @@ const SettingsManager = () => {
         <div className="space-y-8 max-w-4xl">
             <div className="flex justify-between items-center">
                 <h1 className="text-3xl font-bold text-white">Site Ayarları</h1>
+            </div>
+
+            <div className="grid md:grid-cols-2 gap-8">
+                {/* Logo Settings */}
+                <div className="bg-gray-900 rounded-xl p-6 border border-gray-800">
+                    <h2 className="text-xl font-semibold text-white mb-6 flex items-center gap-2">
+                        <ImageIcon className="text-lime-400" />
+                        Logo Ayarları
+                    </h2>
+
+                    <div className="space-y-4">
+                        <div className="flex items-center justify-center bg-black/50 border-2 border-dashed border-gray-700 rounded-xl p-8 hover:border-lime-500/50 transition-colors">
+                            {logoUrl ? (
+                                <div className="text-center">
+                                    <div className="h-16 mb-4 flex items-center justify-center">
+                                        <img src={logoUrl} alt="Site Logo" className="h-full object-contain" />
+                                    </div>
+                                    <button
+                                        onClick={handleDeleteLogo}
+                                        className="text-red-500 hover:text-red-400 text-sm flex items-center gap-1 mx-auto"
+                                    >
+                                        <Trash2 size={16} />
+                                        Logoyu Kaldır
+                                    </button>
+                                </div>
+                            ) : (
+                                <div className="text-center text-gray-500">
+                                    <Upload className="mx-auto mb-2 opacity-50" size={32} />
+                                    <p>Logo Yükle</p>
+                                </div>
+                            )}
+                        </div>
+
+                        <label className="block w-full">
+                            <input
+                                type="file"
+                                accept="image/*"
+                                onChange={handleImageUpload}
+                                className="hidden"
+                                disabled={uploading}
+                            />
+                            <div className={`w-full bg-lime-500 text-black py-3 rounded-lg font-bold text-center cursor-pointer hover:bg-lime-400 transition-colors ${uploading ? 'opacity-50 cursor-not-allowed' : ''}`}>
+                                {uploading ? <span className="flex items-center justify-center gap-2"><Loader2 className="animate-spin" /> Yükleniyor...</span> : 'Görsel Seç'}
+                            </div>
+                        </label>
+                    </div>
+                </div>
+
+                {/* Favicon Settings */}
+                <div className="bg-gray-900 rounded-xl p-6 border border-gray-800">
+                    <h2 className="text-xl font-semibold text-white mb-6 flex items-center gap-2">
+                        <ImageIcon className="text-lime-400" />
+                        Favicon Ayarları
+                    </h2>
+
+                    <div className="space-y-4">
+                        <div className="flex items-center justify-center bg-black/50 border-2 border-dashed border-gray-700 rounded-xl p-8 hover:border-lime-500/50 transition-colors">
+                            {faviconUrl ? (
+                                <div className="text-center">
+                                    <div className="h-16 w-16 mb-4 mx-auto flex items-center justify-center bg-white/10 rounded-lg">
+                                        <img src={faviconUrl} alt="Favicon" className="h-8 w-8 object-contain" />
+                                    </div>
+                                    <button
+                                        onClick={handleDeleteFavicon}
+                                        className="text-red-500 hover:text-red-400 text-sm flex items-center gap-1 mx-auto"
+                                    >
+                                        <Trash2 size={16} />
+                                        Faviconu Kaldır
+                                    </button>
+                                </div>
+                            ) : (
+                                <div className="text-center text-gray-500">
+                                    <Upload className="mx-auto mb-2 opacity-50" size={32} />
+                                    <p>Favicon Yükle</p>
+                                </div>
+                            )}
+                        </div>
+
+                        <label className="block w-full">
+                            <input
+                                type="file"
+                                accept="image/*"
+                                onChange={handleFaviconUpload}
+                                className="hidden"
+                                disabled={uploading}
+                            />
+                            <div className={`w-full bg-lime-500 text-black py-3 rounded-lg font-bold text-center cursor-pointer hover:bg-lime-400 transition-colors ${uploading ? 'opacity-50 cursor-not-allowed' : ''}`}>
+                                {uploading ? <span className="flex items-center justify-center gap-2"><Loader2 className="animate-spin" /> Yükleniyor...</span> : 'Görsel Seç'}
+                            </div>
+                        </label>
+                    </div>
+                </div>
             </div>
 
             {error && (

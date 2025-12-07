@@ -198,7 +198,7 @@ const VehicleManager = () => {
 
             {isModalOpen && (
                 <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 overflow-y-auto py-10">
-                    <div className="bg-gray-900 p-8 rounded-2xl w-full max-w-2xl border border-gray-800 my-auto">
+                    <div className="bg-gray-900 p-8 rounded-2xl w-full max-w-2xl border border-gray-800 my-auto max-h-[90vh] overflow-y-auto">
                         <h2 className="text-2xl font-bold text-white mb-6">{editingId ? 'Aracı Düzenle' : 'Yeni Araç Ekle'}</h2>
                         <form onSubmit={handleSubmit} className="space-y-4">
                             <div>

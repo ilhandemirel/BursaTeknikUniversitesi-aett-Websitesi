@@ -80,21 +80,21 @@ const Navbar = () => {
   }, []);
 
   const allMenuItems = [
-    { id: 'ANASAYFA', show: true },
-    { id: 'KURUMSAL', show: visibleSections.show_about },
-    { id: 'TAKIM', show: visibleSections.show_team },
-    { id: 'ARAÇLAR', show: visibleSections.show_vehicles },
-    { id: 'YARIŞLAR', show: visibleSections.show_races },
-    { id: 'FAALİYETLER', show: visibleSections.show_activities },
-    { id: 'SPONSORLAR', show: visibleSections.show_sponsors },
-    { id: 'MEDYA', show: visibleSections.show_media },
-    { id: 'İLETİŞİM', show: true }
+    { id: 'ANASAYFA', elementId: 'anasayfa', show: true },
+    { id: 'KURUMSAL', elementId: 'kurumsal', show: visibleSections.show_about },
+    { id: 'TAKIM', elementId: 'takım', show: visibleSections.show_team },
+    { id: 'ARAÇLAR', elementId: 'araçlar', show: visibleSections.show_vehicles },
+    { id: 'YARIŞLAR', elementId: 'yarışlar', show: visibleSections.show_races },
+    { id: 'FAALİYETLER', elementId: 'faaliyetler', show: visibleSections.show_activities },
+    { id: 'SPONSORLAR', elementId: 'sponsorlar', show: visibleSections.show_sponsors },
+    { id: 'MEDYA', elementId: 'medya', show: visibleSections.show_media },
+    { id: 'İLETİŞİM', elementId: 'iletişim', show: true }
   ];
 
-  const menuItems = allMenuItems.filter(item => item.show).map(item => item.id);
+  const menuItems = allMenuItems.filter(item => item.show);
 
-  const scrollToSection = (id: string) => {
-    const element = document.getElementById(id.toLowerCase());
+  const scrollToSection = (elementId: string) => {
+    const element = document.getElementById(elementId);
     if (element) {
       element.scrollIntoView({ behavior: 'smooth' });
     }
@@ -132,10 +132,10 @@ const Navbar = () => {
             {menuItems.map((item, index) => (
               <button
                 key={index}
-                onClick={() => scrollToSection(item)}
+                onClick={() => scrollToSection(item.elementId)}
                 className="px-3 py-2 text-sm font-semibold text-white hover:text-lime-400 transition-colors duration-300 relative group"
               >
-                {item}
+                {item.id}
                 <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-lime-400 group-hover:w-full transition-all duration-300"></span>
               </button>
             ))}
@@ -174,10 +174,10 @@ const Navbar = () => {
               {menuItems.map((item, index) => (
                 <button
                   key={index}
-                  onClick={() => scrollToSection(item)}
+                  onClick={() => scrollToSection(item.elementId)}
                   className="block w-full text-left px-3 py-2 text-base font-medium text-white hover:text-lime-400 hover:bg-lime-500/10 rounded-md transition-colors"
                 >
-                  {item}
+                  {item.id}
                 </button>
               ))}
               <div className="pt-4 mt-4 border-t border-lime-500/20">

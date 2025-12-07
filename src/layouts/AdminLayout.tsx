@@ -26,9 +26,9 @@ const AdminLayout = () => {
     ];
 
     return (
-        <div className="min-h-screen bg-black flex">
+        <div className="fixed inset-0 bg-black flex overflow-hidden">
             {/* Sidebar */}
-            <aside className="w-64 bg-gray-900 border-r border-lime-500/20">
+            <aside className="w-64 bg-gray-900 border-r border-lime-500/20 overflow-y-auto">
                 <div className="p-6">
                     <h1 className="text-2xl font-bold text-white">YILDIRIM</h1>
                     <p className="text-lime-400 text-sm">Yönetim Paneli</p>

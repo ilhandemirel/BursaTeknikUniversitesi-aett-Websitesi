@@ -1,9 +1,10 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from './contexts/AuthContext';
 import ProtectedRoute from './components/ProtectedRoute';
 import LandingPage from './pages/LandingPage';
 import NewsDetail from './pages/NewsDetail';
+import ActivityDetail from './pages/ActivityDetail';
 import Login from './pages/Login';
 import AdminLayout from './layouts/AdminLayout';
 import Dashboard from './pages/admin/Dashboard';
@@ -15,8 +16,36 @@ import ActivitiesManager from './pages/admin/ActivitiesManager';
 import SponsorsManager from './pages/admin/SponsorsManager';
 import MessagesManager from './pages/admin/MessagesManager';
 import SettingsManager from './pages/admin/SettingsManager';
+import { supabase } from './lib/supabase';
 
 function App() {
+  useEffect(() => {
+    const fetchFavicon = async () => {
+      try {
+        const { data } = await supabase
+          .from('site_settings')
+          .select('value')
+          .eq('key', 'favicon_url')
+          .single();
+
+        if (data?.value) {
+          const link = document.querySelector("link[rel~='icon']") as HTMLLinkElement;
+          if (link) {
+            link.href = data.value;
+          } else {
+            const newLink = document.createElement('link');
+            newLink.rel = 'icon';
+            newLink.href = data.value;
+            document.head.appendChild(newLink);
+          }
+        }
+      } catch (error) {
+        console.error('Error fetching favicon:', error);
+      }
+    };
+
+    fetchFavicon();
+  }, []);
   return (
     <BrowserRouter>
       <AuthProvider>
@@ -24,6 +53,7 @@ function App() {
           {/* Public Routes */}
           <Route path="/" element={<LandingPage />} />
           <Route path="/haber/:id" element={<NewsDetail />} />
+          <Route path="/faaliyet/:id" element={<ActivityDetail />} />
           <Route path="/login" element={<Login />} />
 
           {/* Protected Admin Routes */}

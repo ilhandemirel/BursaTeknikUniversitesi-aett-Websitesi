@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { supabase } from '../lib/supabase';
 
@@ -64,19 +65,21 @@ const Activities = () => {
                             whileInView={{ opacity: 1, y: 0 }}
                             viewport={{ once: true }}
                             transition={{ delay: index * 0.1 }}
-                            className="bg-black rounded-xl overflow-hidden border border-lime-500/10 hover:border-lime-500/30 transition-all duration-300"
+                            className="bg-black rounded-xl overflow-hidden border border-lime-500/10 hover:border-lime-500/30 transition-all duration-300 group cursor-pointer"
                         >
-                            <div className="aspect-video bg-gray-800 flex items-center justify-center relative">
-                                {activity.image_url ? (
-                                    <img src={activity.image_url} alt={activity.title} className="w-full h-full object-cover" />
-                                ) : (
-                                    <span className="text-gray-600">Görsel Yok</span>
-                                )}
-                            </div>
-                            <div className="p-6">
-                                <h3 className="text-xl font-bold text-white mb-2">{activity.title}</h3>
-                                <p className="text-gray-400 text-sm line-clamp-3">{activity.description}</p>
-                            </div>
+                            <Link to={`/faaliyet/${activity.id}`}>
+                                <div className="aspect-video bg-gray-800 flex items-center justify-center relative">
+                                    {activity.image_url ? (
+                                        <img src={activity.image_url} alt={activity.title} className="w-full h-full object-cover" />
+                                    ) : (
+                                        <span className="text-gray-600">Görsel Yok</span>
+                                    )}
+                                </div>
+                                <div className="p-6">
+                                    <h3 className="text-xl font-bold text-white mb-2 group-hover:text-lime-400 transition-colors">{activity.title}</h3>
+                                    <p className="text-gray-400 text-sm line-clamp-3">{activity.description}</p>
+                                </div>
+                            </Link>
                         </motion.div>
                     ))}
 

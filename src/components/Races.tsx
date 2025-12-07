@@ -67,20 +67,20 @@ const Races = () => {
                             viewport={{ once: true }}
                             className="bg-gray-900 rounded-2xl p-6 border border-lime-500/20 flex flex-col md:flex-row gap-6 items-center"
                         >
-                            <div className="w-full md:w-1/3 aspect-video bg-gray-800 rounded-xl overflow-hidden flex items-center justify-center">
+                            <div className="w-full md:w-1/3 aspect-video bg-gray-800 rounded-xl overflow-hidden flex items-center justify-center relative">
                                 {race.image_url ? (
                                     <img src={race.image_url} alt={race.title} className="w-full h-full object-cover" />
                                 ) : (
                                     <span className="text-gray-600">Görsel Yok</span>
                                 )}
+                                {race.year && (
+                                    <div className="absolute top-2 right-2 bg-black/60 backdrop-blur-md text-white text-xs font-bold px-3 py-1 rounded-lg border border-white/10 shadow-lg">
+                                        {race.year}
+                                    </div>
+                                )}
                             </div>
                             <div className="w-full md:w-2/3">
-                                <div className="flex justify-between items-start mb-2">
-                                    <h3 className="text-2xl font-bold text-white">{race.title}</h3>
-                                    {race.year && (
-                                        <span className="text-gray-500 text-sm">{race.year}</span>
-                                    )}
-                                </div>
+                                <h3 className="text-2xl font-bold text-white mb-2">{race.title}</h3>
                                 <p className="text-gray-400 mb-4">{race.description}</p>
                                 {race.rank && (
                                     <span className="text-lime-400 font-bold">Derece: {race.rank}</span>
