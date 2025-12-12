@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
 import { Lock } from 'lucide-react';
+import SEO from '../components/SEO';
 
 const Login = () => {
     const [email, setEmail] = useState('');
@@ -30,6 +31,7 @@ const Login = () => {
 
     return (
         <div className="min-h-screen bg-black flex items-center justify-center px-4">
+            <SEO title="Yönetici Girişi" />
             <div className="max-w-md w-full bg-gray-900 rounded-2xl p-8 border border-lime-500/20">
                 <div className="text-center mb-8">
                     <div className="w-16 h-16 bg-lime-400/10 rounded-full flex items-center justify-center mx-auto mb-4 text-lime-400">

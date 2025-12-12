@@ -3,6 +3,7 @@ import { useParams, Link, useNavigate } from 'react-router-dom';
 import { ChevronLeft, Calendar } from 'lucide-react';
 import { motion } from 'framer-motion';
 import Navbar from '../components/Navbar';
+import SEO from '../components/SEO';
 import Footer from '../components/Footer';
 import { supabase } from '../lib/supabase';
 
@@ -57,6 +58,12 @@ const ActivityDetail = () => {
 
     return (
         <div className="min-h-screen bg-black text-white">
+            <SEO
+                title={activity.title}
+                description={activity.description.substring(0, 150) + "..."}
+                image={activity.image_url}
+                url={`/faaliyet/${activity.id}`}
+            />
             <Navbar />
 
             <article className="pt-24 pb-20 px-4 sm:px-6 lg:px-8 max-w-4xl mx-auto">

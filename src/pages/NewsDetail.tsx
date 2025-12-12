@@ -3,6 +3,7 @@ import { useParams, Link } from 'react-router-dom';
 import { ArrowLeft, Calendar, Loader2 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import Navbar from '../components/Navbar';
+import SEO from '../components/SEO';
 import Footer from '../components/Footer';
 import { supabase } from '../lib/supabase';
 
@@ -60,6 +61,14 @@ const NewsDetail = () => {
 
     return (
         <div className="min-h-screen bg-black text-white flex flex-col">
+            {news && (
+                <SEO
+                    title={news.title}
+                    description={news.content.substring(0, 150) + "..."}
+                    image={news.image_url}
+                    url={`/haber/${news.id}`}
+                />
+            )}
             <Navbar />
 
             <main className="flex-grow pt-24 pb-20 px-4 sm:px-6 lg:px-8">

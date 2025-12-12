@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import Navbar from '../components/Navbar';
+import SEO from '../components/SEO';
 import Hero from '../components/Hero';
 import Introduction from '../components/Introduction';
 import About from '../components/About';
@@ -81,6 +82,7 @@ function LandingPage() {
                 }}></div>
             </div>
 
+            <SEO />
             <Navbar />
 
             <main className="relative">
