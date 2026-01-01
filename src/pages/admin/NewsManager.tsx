@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Plus, Trash2, Edit2, Upload, Loader2, X } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
+import AIAssistant from '../../components/admin/AIAssistant';
 
 interface NewsItem {
     id: string;
@@ -179,7 +180,14 @@ const NewsManager = () => {
                                 />
                             </div>
                             <div>
-                                <label className="block text-sm font-medium text-gray-400 mb-2">İçerik</label>
+                                <div className="flex justify-between items-center mb-2">
+                                    <label className="block text-sm font-medium text-gray-400">İçerik</label>
+                                    <AIAssistant
+                                        onGenerate={(text) => setFormData({ ...formData, content: text })}
+                                        placeholder="Örnek: Yaklaşan bisiklet turu hakkında heyecan verici bir haber yazısı hazırla."
+                                        initialValue={formData.content}
+                                    />
+                                </div>
                                 <textarea
                                     required
                                     rows={4}

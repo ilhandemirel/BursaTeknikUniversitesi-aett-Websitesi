@@ -916,7 +916,7 @@ const SettingsManager = () => {
                                 value={introSettings.headlineHighlight}
                                 onChange={(e) => setIntroSettings({ ...introSettings, headlineHighlight: e.target.value })}
                                 className="w-full bg-black border border-gray-700 rounded-lg px-4 py-2 text-white focus:border-lime-500 focus:outline-none"
-                                placeholder="Örn: Haciwatt takımıyız."
+                                placeholder="Örn: YILDIRIM takımıyız."
                             />
                         </div>
                     </div>
@@ -1051,59 +1051,6 @@ const SettingsManager = () => {
                 </div>
             </div>
 
-            {/* Logo Section */}
-            <div className="bg-gray-900 rounded-xl p-6 border border-gray-800">
-                <h2 className="text-xl font-semibold text-white mb-6 flex items-center gap-2">
-                    <ImageIcon className="text-lime-400" />
-                    Site Logosu
-                </h2>
-
-                <div className="flex flex-col sm:flex-row gap-8 items-start">
-                    <div className="w-full sm:w-1/2 md:w-1/3 aspect-video bg-black rounded-lg border-2 border-dashed border-gray-700 flex items-center justify-center relative group overflow-hidden">
-                        {logoUrl ? (
-                            <>
-                                <img src={logoUrl} alt="Site Logo" className="w-full h-full object-contain p-4" />
-                                <div className="absolute inset-0 bg-black/80 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                                    <button
-                                        onClick={handleDeleteLogo}
-                                        className="p-2 bg-red-500/20 text-red-500 rounded-full hover:bg-red-500/40 transition-colors"
-                                        title="Logoyu Sil"
-                                    >
-                                        <Trash2 />
-                                    </button>
-                                </div>
-                            </>
-                        ) : (
-                            <div className="text-center text-gray-500">
-                                <p>Logo Yok</p>
-                                <p className="text-xs mt-1">PNG, JPG, SVG</p>
-                            </div>
-                        )}
-                    </div>
-
-                    <div className="flex-1 space-y-4">
-                        <label className="block text-sm font-medium text-gray-400 mb-2">
-                            Yeni Logo Yükle
-                        </label>
-                        <div className="flex gap-4">
-                            <label className="cursor-pointer bg-lime-500 text-black px-4 py-2 rounded-lg font-semibold hover:bg-lime-400 transition-colors flex items-center gap-2">
-                                {uploading ? <Loader2 className="animate-spin" size={20} /> : <Upload size={20} />}
-                                <span>{uploading ? 'Yükleniyor...' : 'Dosya Seç'}</span>
-                                <input
-                                    type="file"
-                                    className="hidden"
-                                    accept="image/*"
-                                    onChange={handleImageUpload}
-                                    disabled={uploading}
-                                />
-                            </label>
-                        </div>
-                        <p className="text-xs text-gray-500">
-                            Önerilen boyut: Yükseklik en az 100px. Transparan arka planlı PNG veya SVG önerilir.
-                        </p>
-                    </div>
-                </div>
-            </div>
 
             {/* About Section */}
             <div className="bg-gray-900 rounded-xl p-6 border border-gray-800">

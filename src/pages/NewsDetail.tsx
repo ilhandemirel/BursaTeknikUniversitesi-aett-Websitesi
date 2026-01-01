@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
 import { ArrowLeft, Calendar, Loader2 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import Navbar from '../components/Navbar';
@@ -17,6 +17,7 @@ interface NewsItem {
 
 const NewsDetail = () => {
     const { id } = useParams<{ id: string }>();
+    const navigate = useNavigate();
     const [news, setNews] = useState<NewsItem | null>(null);
     const [loading, setLoading] = useState(true);
 
@@ -51,10 +52,13 @@ const NewsDetail = () => {
         return (
             <div className="min-h-screen bg-black text-white flex flex-col items-center justify-center p-4">
                 <h2 className="text-2xl font-bold mb-4">Haber Bulunamadı</h2>
-                <Link to="/#medya" className="text-lime-400 hover:text-lime-300 flex items-center gap-2">
+                <button
+                    onClick={() => navigate('/', { state: { scrollTo: 'medya' } })}
+                    className="text-lime-400 hover:text-lime-300 flex items-center gap-2"
+                >
                     <ArrowLeft size={20} />
                     Geri Dön
-                </Link>
+                </button>
             </div>
         );
     }
@@ -78,10 +82,13 @@ const NewsDetail = () => {
                         animate={{ opacity: 1, y: 0 }}
                         className="space-y-8"
                     >
-                        <Link to="/#medya" className="inline-flex items-center text-gray-400 hover:text-lime-400 transition-colors mb-8">
+                        <button
+                            onClick={() => navigate('/', { state: { scrollTo: 'medya' } })}
+                            className="inline-flex items-center text-gray-400 hover:text-lime-400 transition-colors mb-8"
+                        >
                             <ArrowLeft className="mr-2" size={20} />
                             Haberlere Dön
-                        </Link>
+                        </button>
 
                         <div className="aspect-video w-full md:w-1/2 mx-auto bg-gray-900 rounded-2xl overflow-hidden border border-gray-800">
                             {news.image_url ? (

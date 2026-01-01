@@ -25,3 +25,9 @@ body {
   background-color: black;
   color: white;
 }
+
+/* Admin panel scroll performance optimization */
+.team-card {
+  content-visibility: auto;
+  contain-intrinsic-size: 0 280px;
+}

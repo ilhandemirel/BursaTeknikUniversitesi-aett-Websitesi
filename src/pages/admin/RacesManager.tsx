@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Plus, Pencil, Trash2, X, Save, AlertCircle, Loader2, Upload } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
+import AIAssistant from '../../components/admin/AIAssistant';
 
 interface Race {
     id: string;
@@ -197,9 +198,16 @@ const RacesManager = () => {
                             </div>
 
                             <div>
-                                <label className="block text-sm font-medium text-gray-400 mb-1">
-                                    Açıklama
-                                </label>
+                                <div className="flex justify-between items-center mb-1">
+                                    <label className="block text-sm font-medium text-gray-400">
+                                        Açıklama
+                                    </label>
+                                    <AIAssistant
+                                        onGenerate={(text) => setCurrentRace({ ...currentRace, description: text })}
+                                        placeholder="Örnek: 2024 İstanbul Kış Maratonu için zorlu ama eğlenceli bir yarış açıklaması yaz."
+                                        initialValue={currentRace.description}
+                                    />
+                                </div>
                                 <textarea
                                     required
                                     rows={4}

@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import { useParams, Link, useNavigate } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
 import { ChevronLeft, Calendar } from 'lucide-react';
 import { motion } from 'framer-motion';
 import Navbar from '../components/Navbar';
@@ -67,10 +67,13 @@ const ActivityDetail = () => {
             <Navbar />
 
             <article className="pt-24 pb-20 px-4 sm:px-6 lg:px-8 max-w-4xl mx-auto">
-                <Link to="/#faaliyetler" className="inline-flex items-center text-gray-400 hover:text-lime-400 transition-colors mb-8 group">
+                <button
+                    onClick={() => navigate('/', { state: { scrollTo: 'faaliyetler' } })}
+                    className="inline-flex items-center text-gray-400 hover:text-lime-400 transition-colors mb-8 group"
+                >
                     <ChevronLeft className="mr-2 group-hover:-translate-x-1 transition-transform" />
                     Faaliyetlere Dön
-                </Link>
+                </button>
 
                 <motion.div
                     initial={{ opacity: 0, y: 20 }}

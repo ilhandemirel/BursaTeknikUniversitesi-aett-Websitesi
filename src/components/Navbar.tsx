@@ -1,9 +1,12 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { Menu, X, Mail, Instagram, Twitter, Linkedin } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { supabase } from '../lib/supabase';
 
 const Navbar = () => {
+  const navigate = useNavigate();
+  const location = useLocation();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [logoUrl, setLogoUrl] = useState<string | null>(null);
@@ -93,12 +96,44 @@ const Navbar = () => {
 
   const menuItems = allMenuItems.filter(item => item.show);
 
+  const isOnHomePage = location.pathname === '/';
+
+  // Banner ve navbar yüksekliğini hesaplayarak hedef pozisyonu bul
+  const getScrollOffset = () => {
+    const navbar = document.querySelector('nav');
+    const banner = document.querySelector('[class*="fixed top-0"][class*="z-[100]"]');
+    const navbarHeight = navbar?.getBoundingClientRect().height || 80;
+    const bannerHeight = banner?.getBoundingClientRect().height || 0;
+    return navbarHeight + bannerHeight + 20; // 20px ekstra boşluk
+  };
+
   const scrollToSection = (elementId: string) => {
-    const element = document.getElementById(elementId);
-    if (element) {
-      element.scrollIntoView({ behavior: 'smooth' });
-    }
     setIsMenuOpen(false);
+
+    if (isOnHomePage) {
+      // Ana sayfadaysa direkt scroll yap
+      const element = document.getElementById(elementId);
+      if (element) {
+        // Manuel scroll ile banner/overlay'den etkilenme
+        const targetPosition = element.getBoundingClientRect().top + window.scrollY - getScrollOffset();
+        window.scrollTo({
+          top: targetPosition,
+          behavior: 'smooth'
+        });
+      }
+    } else {
+      // Detay sayfasındaysa state ile ana sayfaya yönlendir (hash kullanma)
+      navigate('/', { state: { scrollTo: elementId } });
+    }
+  };
+
+  const goToHome = () => {
+    setIsMenuOpen(false);
+    if (isOnHomePage) {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    } else {
+      navigate('/');
+    }
   };
 
   return (
@@ -106,7 +141,7 @@ const Navbar = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-20">
           <div className="flex items-center space-x-4">
-            <div className="relative cursor-pointer" onClick={() => scrollToSection('anasayfa')}>
+            <div className="relative cursor-pointer" onClick={goToHome}>
               <div className="absolute inset-0 bg-lime-400 blur-2xl opacity-50 animate-pulse"></div>
               <div className="relative w-16 h-16 bg-gradient-to-br from-lime-400 to-lime-600 rounded-full flex items-center justify-center border-2 border-lime-300 shadow-lg shadow-lime-500/50 overflow-hidden">
                 {logoUrl ? (

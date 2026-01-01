@@ -73,8 +73,11 @@ const Hero = () => {
     }, [vehicles]);
 
     return (
-        <section id="anasayfa" className="relative min-h-screen flex items-center pt-20">
-            <div className="absolute inset-0 bg-gradient-to-r from-black via-transparent to-black/50"></div>
+        <section id="anasayfa" className="relative min-h-screen flex items-center pt-20 pb-32">
+            {/* Horizontal gradient for left/right darkening */}
+            <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-transparent to-black/50"></div>
+            {/* Extended gradient overlay that bleeds past section boundary */}
+            <div className="absolute inset-x-0 top-0 bottom-[-100px] bg-gradient-to-b from-transparent via-transparent to-black pointer-events-none"></div>
 
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 relative z-10 w-full">
                 <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center">

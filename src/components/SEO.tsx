@@ -19,7 +19,7 @@ const SEO: React.FC<SEOProps> = ({
     const siteTitle = "Bursa Teknik Üniversitesi AETT";
     const defaultDescription = "Bursa Teknik Üniversitesi Alternatif Enerjili Taşıtlar Topluluğu (AETT), elektrikli araç teknolojileri üzerine çalışan öğrenci topluluğudur.";
     const defaultKeywords = ["btu", "bursa teknik üniversitesi", "btü", "aett", "yıldırım", "elektrikli araç"];
-    const siteUrl = "https://aett.vercel.app";
+    const siteUrl = "https://btuyildirim.com";
     const defaultImage = `${siteUrl}/logo.png`; // Assuming there is a logo or fallback image
 
     const finalTitle = title ? `${title} | ${siteTitle}` : siteTitle;

@@ -7,6 +7,8 @@ create table if not exists team_members (
   name text not null,
   role text not null,
   image_url text,
+  group_type text default 'Ekip Üyesi',
+  sub_group text,
   created_at timestamp with time zone default timezone('utc'::text, now()) not null
 );
 

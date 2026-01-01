@@ -1,6 +1,6 @@
 import React from 'react';
 import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom';
-import { LayoutDashboard, Users, Car, Newspaper, LogOut, Settings, Trophy, Calendar, Handshake, Mail } from 'lucide-react';
+import { LayoutDashboard, Users, Car, Newspaper, LogOut, Settings, Trophy, Calendar, Handshake, Mail, Flag } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 
 const AdminLayout = () => {
@@ -22,6 +22,7 @@ const AdminLayout = () => {
         { path: '/admin/sponsors', icon: Handshake, label: 'Sponsorlar' },
         { path: '/admin/news', icon: Newspaper, label: 'Haberler' },
         { path: '/admin/messages', icon: Mail, label: 'Mesajlar' },
+        { path: '/admin/holidays', icon: Flag, label: 'Bayramlar' },
         { path: '/admin/settings', icon: Settings, label: 'Ayarlar' },
     ];
 

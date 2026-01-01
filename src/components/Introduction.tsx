@@ -4,9 +4,9 @@ import { supabase } from '../lib/supabase';
 
 const Introduction = () => {
     const [content, setContent] = useState({
-        headline_start: "BTÜ'nün elektromobil / otonom araç takımlarını bünyesinde bulunduran AETT'ye bağlı, tamamen öğrencilerin özgün proje ve tasarımlarını hayata geçiren",
-        headline_highlight: "Haciwatt takımıyız.",
-        description_1: "Haciwatt, Alternatif Enerjili Taşıtlar Topluluğu, Bursa Teknik Üniversitesi'nin 2017 yılından itibaren aktif olarak yurtiçi Elektrikli Araç yarışmalarına, 2020 yılından beri Otonom Araç yarışmalarına katılan bir öğrenci topluluğudur.",
+        headline_start: "BTÜ'nün elektromobil/hidromobil araç takımlarını bünyesinde bulunduran AETT'ye bağlı, tamamen öğrencilerin özgün proje ve tasarımlarını hayata geçiren",
+        headline_highlight: "YILDIRIM takımıyız.",
+        description_1: "YILDIRIM, Alternatif Enerjili Taşıtlar Topluluğu, Bursa Teknik Üniversitesi'nin 2017 yılından itibaren aktif olarak yurtiçi Elektrikli Araç yarışmalarına, 2020 yılından beri Otonom Araç yarışmalarına katılan bir öğrenci topluluğudur.",
         description_2: "Kar amacı gütmeksizin, yerli ve milli teknoloji hamlesi kapsamında %100 öğrenci işi olarak adlandırdığımız özgün tasarım ve fikirlerimizi hayata geçirerek sektör öncesi deneyim kazanmak ana hedefimiz olmakla beraber uluslararası yarışmalarda ülkemizi ve üniversitemizi en iyi şekilde temsil etmek bir diğer önemli hedefimizdir.",
         image_url: 'https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?q=80&w=2070&auto=format&fit=crop'
     });
@@ -41,7 +41,10 @@ const Introduction = () => {
     }, []);
 
     return (
-        <section id="hakkimizda" className="py-20 bg-black relative overflow-hidden">
+        <section id="hakkimizda" className="py-20 relative overflow-hidden">
+            {/* Top gradient to blend seamlessly with Hero section above */}
+            <div className="absolute inset-x-0 top-0 h-40 bg-gradient-to-b from-black via-black/50 to-transparent pointer-events-none z-0"></div>
+
             {/* Background Gradients */}
             <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-lime-500/10 rounded-full blur-[120px] pointer-events-none" />
             <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-lime-500/5 rounded-full blur-[120px] pointer-events-none" />
