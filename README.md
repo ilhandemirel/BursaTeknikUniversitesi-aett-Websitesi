@@ -7,19 +7,6 @@ Bursa Teknik Üniversitesi YILDIRIM takımının modern ve responsive web sitesi
 ![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-3.4-06B6D4?logo=tailwindcss&logoColor=white)
 ![Vite](https://img.shields.io/badge/Vite-5.4-646CFF?logo=vite&logoColor=white)
 
-## � Ekran Görüntüleri
-
-### Ana Sayfa
-![Ana Sayfa](screenshots/hero.png)
-
-### Admin Panel - Dashboard
-![Dashboard](screenshots/dashboard.png)
-
-### Admin Panel - Site Ayarları
-![Site Ayarları](screenshots/settings.png)
-
-### Admin Panel - Haber Yönetimi (AI Destekli)
-![Haber Yönetimi](screenshots/news-manager.png)
 
 ## �🚀 Özellikler
 
@@ -69,27 +56,16 @@ Bursa Teknik Üniversitesi YILDIRIM takımının modern ve responsive web sitesi
 - **İkonlar:** Lucide React
 - **Email:** EmailJS
 
-## 📁 Proje Yapısı
+## � Ekran Görüntüleri
 
-```
-src/
-├── components/          # UI bileşenleri
-│   ├── Hero.tsx         # Ana banner ve slider
-│   ├── Navbar.tsx       # Navigasyon menüsü
-│   ├── Team.tsx         # Takım kadrosu (marquee)
-│   ├── VehicleShowcase.tsx  # Araç galerisi
-│   ├── Activities.tsx   # Etkinlikler
-│   ├── Races.tsx        # Yarışlar
-│   ├── Sponsors.tsx     # Sponsorlar
-│   ├── Contact.tsx      # İletişim formu
-│   └── admin/           # Admin bileşenleri
-├── pages/
-│   ├── LandingPage.tsx  # Ana sayfa
-│   ├── NewsDetail.tsx   # Haber detay
-│   ├── ActivityDetail.tsx # Etkinlik detay
-│   ├── Login.tsx        # Giriş sayfası
-│   └── admin/           # Admin sayfaları
-├── layouts/             # Layout bileşenleri
-├── lib/                 # Yardımcı fonksiyonlar
-└── types/               # TypeScript tipleri
-```
+### Ana Sayfa
+![Ana Sayfa](screenshots/hero.png)
+
+### Admin Panel - Dashboard
+![Dashboard](screenshots/dashboard.png)
+
+### Admin Panel - Site Ayarları
+![Site Ayarları](screenshots/settings.png)
+
+### Admin Panel - Haber Yönetimi (AI Destekli)
+![Haber Yönetimi](screenshots/news-manager.png)
