@@ -8,7 +8,7 @@ Bursa Teknik Üniversitesi YILDIRIM takımının modern ve responsive web sitesi
 ![Vite](https://img.shields.io/badge/Vite-5.4-646CFF?logo=vite&logoColor=white)
 
 
-## �🚀 Özellikler
+## 🚀 Özellikler
 
 ### 🎨 Kullanıcı Arayüzü
 - **Modern Tasarım** - Koyu tema, gradient efektleri ve şık görsel hiyerarşi
@@ -56,7 +56,7 @@ Bursa Teknik Üniversitesi YILDIRIM takımının modern ve responsive web sitesi
 - **İkonlar:** Lucide React
 - **Email:** EmailJS
 
-## � Ekran Görüntüleri
+## 📸 Ekran Görüntüleri
 
 ### Ana Sayfa
 ![Ana Sayfa](screenshots/hero.png)
